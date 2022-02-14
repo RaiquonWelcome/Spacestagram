@@ -6,6 +6,8 @@ const app = express()
 const port = 3000
 const API_KEY = 'Ze29b4Ox5ISqYeaf848AmS8nkDn1gCzGHrbyp5lR'
 
+
+
 app.set('view engine', 'ejs')
 
 app.use(express.static('views'))
@@ -14,25 +16,42 @@ app.use(express.urlencoded({ extended: true}))
 app.use(logger('dev'))
 
 app.get('/', (req, res) => {
-    res.render("index.ejs")
+    
+    getNasaData((data, isError)=>{
+        if (isError) {
+            res.sendStatus(404)
+        }else{
+            res.sendStatus(200)
+            res.render("index.ejs")
+            console.log(data)
+        }
+        
+
+    })
 })
 
-function getNasaData() {
+//consider storing nasa data in an object on the server.
+// access the nasa data from the html document via ejs 
+
+function getNasaData(callback) {
+    let data = ''
 
     https.get(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY}`, (res) => {
-        let data = ''
+        
 
         res.on('data', (chunk) => {
             data += chunk
         })
 
         res.on('end', () => {
-            return JSON.parse(data)
+            JSON.parse(data)
+            callback(data, false) 
         })
     }).on('error', (err) => {
         console.log(err.message)
+        callback(null, true)
     })
-
+    
 }
 
 
