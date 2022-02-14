@@ -25,23 +25,23 @@
 
             <hr> <!--creates a horizontal bar-->
 
-            <h1>Spacestagram</h1> <!--title-->
-            <h3>Image-sharing from the final frontier</h3>
+            <!--<h1>Spacestagram</h1> 
+            <h3>Image-sharing from the final frontier</h3>-->
 
         </header>
 
         <section id="content">
             <div>
                 <div>
-                    <h3>PLACEHOLDER: Title of below image</h3>
+                    <h1><%= locals.data.title || 'default' %> </h1>
                 </div>
 
                 <div>               
-                    <img src="/images/img.png">
+                    <img src= <%= locals.data.hdurl %>>
                 </div>
 
                 <div> 
-                    <p>PLACEHOLDER: Block of information about above image.</p>           
+                    <p> <%= locals.data.explanation %> </p>           
                 </div>
 
                 <div>

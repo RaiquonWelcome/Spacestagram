@@ -8,6 +8,7 @@ const API_KEY = 'Ze29b4Ox5ISqYeaf848AmS8nkDn1gCzGHrbyp5lR'
 
 
 
+
 app.set('view engine', 'ejs')
 
 app.use(express.static('views'))
@@ -21,12 +22,10 @@ app.get('/', (req, res) => {
         if (isError) {
             res.sendStatus(404)
         }else{
-            res.sendStatus(200)
-            res.render("index.ejs")
-            console.log(data)
+            res.render("index.ejs", {data: data})
+            console.log('DATA RECEIVED:\n' + data)
         }
         
-
     })
 })
 
@@ -36,17 +35,17 @@ app.get('/', (req, res) => {
 function getNasaData(callback) {
     let data = ''
 
-    https.get(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY}`, (res) => {
-        
+    https.get(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY}`, (res) => {    
 
         res.on('data', (chunk) => {
             data += chunk
         })
 
         res.on('end', () => {
-            JSON.parse(data)
-            callback(data, false) 
+            let parsedData = JSON.parse(data)
+            callback(parsedData, false) 
         })
+
     }).on('error', (err) => {
         console.log(err.message)
         callback(null, true)
