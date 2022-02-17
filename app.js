@@ -9,6 +9,8 @@ const API_KEY = 'Ze29b4Ox5ISqYeaf848AmS8nkDn1gCzGHrbyp5lR'
 
 
 
+
+
 app.set('view engine', 'ejs')
 
 app.use(express.static('views'))
@@ -22,15 +24,13 @@ app.get('/', (req, res) => {
         if (isError) {
             res.sendStatus(404)
         }else{
-            res.render("index.ejs", {data: data})
+            res.render("index.ejs", {data: data, dataString: JSON.stringify(data)})
             console.log('DATA RECEIVED:\n' + data)
         }
         
     })
 })
 
-//consider storing nasa data in an object on the server.
-// access the nasa data from the html document via ejs 
 
 function getNasaData(callback) {
     let data = ''
@@ -43,6 +43,7 @@ function getNasaData(callback) {
 
         res.on('end', () => {
             let parsedData = JSON.parse(data)
+            console.log(data)
             callback(parsedData, false) 
         })
 
