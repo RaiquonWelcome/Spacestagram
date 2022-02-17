@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>Spacestagram</title>
+        <meta name="description" content="Image-sharing from the final frontier. view and like pictures taken by NASA.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="scripts/client.js"></script>
+
+    </head>
+
+    <body onLoad="getMedia()">
+
+        <header>
+
+            <nav>
+                <ul>
+
+                    <li><text>Spacestagram</text></li> <!--TODO: Possible change to a clickable image that takes you back to the home screen-->
+                    <li><button type="button" role="button" id="Login" >Log in</button></li> <!--TODO: When clicked, navigates user to the login page-->
+                    <li><button type="button" role="button" id="">Sign Up</button></li>
+                
+                </ul>
+            </nav>
+
+            <hr> <!--creates a horizontal bar-->
+
+            <!--<h1>Spacestagram</h1> 
+            <h3>Image-sharing from the final frontier</h3>-->
+
+        </header>
+
+        <section id="content">
+            <div>
+                <div>
+                    <h1><%= locals.data.title || 'default' %> </h1>
+                </div>
+
+                <div id="media"><%= locals.dataString%></div>
+                    
+                <div> 
+                    <p> <%= locals.data.explanation %> </p>           
+                </div>
+
+                <div>
+                    <span>                  
+                        <button type="button" role="button" id="like">Like</button> <!-- the element attribute, role is used to for accessability. Let's a screen reader know that it is a button-->
+                    </span>
+                    <span>
+                         PLACEHOLDER: 123   
+                    </span>
+                </div>
+            </div>
+            
+
+        </section>
+
+
+    </body>
+
+</html>
