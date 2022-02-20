@@ -37,8 +37,16 @@
                 <div>
                     <h1><%= locals.data.title || 'default' %> </h1>
                 </div>
+                <div>
+                    <h3><%= 'Author: ' + locals.data.copyright %></h3>
+                </div>
+                <div>
+                    <h4><%'Date' + locals.data.date%></h4>
+                </div>
 
-                <div id="media"><%= locals.dataString%></div>
+                <div id="media">
+                    <%= locals.dataString%>
+                </div>
                     
                 <div> 
                     <p> <%= locals.data.explanation %> </p>           
