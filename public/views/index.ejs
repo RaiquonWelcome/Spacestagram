@@ -38,10 +38,7 @@
                     <h1><%= locals.data.title || 'default' %> </h1>
                 </div>
                 <div>
-                    <h3><%= 'Author: ' + locals.data.copyright %></h3>
-                </div>
-                <div>
-                    <h4><%'Date' + locals.data.date%></h4>
+                    <h3><%= 'Author: ' + (locals.data.copyright || 'Not Listed') +'<><>'+'Date' + locals.data.date%></h3>
                 </div>
 
                 <div id="media">
