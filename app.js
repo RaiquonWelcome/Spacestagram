@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const https = require('https')
 const MongoClient = require('mongodb').mongoClient
+const bcrypt = require('bcrypt')
 
 //Constant Variables
 const app = express()
@@ -21,7 +22,6 @@ const API_KEY = 'Ze29b4Ox5ISqYeaf848AmS8nkDn1gCzGHrbyp5lR'
 app.set('views', path.join(__dirname, 'public/views'));
 app.set('view engine', 'ejs')
 
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public','images','favicon_io', 'favicon.ico')));
 app.use(logger('dev'))
 app.use(express.static('public'))
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true}))
 
-
+//Routes
 app.get('/', (req, res) => {
     
     getNasaData((data, isError)=>{
@@ -37,10 +37,18 @@ app.get('/', (req, res) => {
             res.sendStatus(404)
         }else{
             res.render("index.ejs", {data: data, dataString: JSON.stringify(data)})
-            console.log('DATA RECEIVED:\n' + data)
+            console.log('DATA RECEIVED:\n' + JSON.stringify(data))
         }
         
     })
+})
+
+app.get('/login', (req, res) =>{
+    res.render('login.ejs')
+})
+
+app.get('/register', (req, res) =>{
+    res.render('register.ejs')
 })
 
 
@@ -55,7 +63,7 @@ function getNasaData(callback) {
 
         res.on('end', () => {
             let parsedData = JSON.parse(data)
-            console.log(data)
+            //console.log(data)
             callback(parsedData, false) 
         })
 
