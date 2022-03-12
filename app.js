@@ -51,43 +51,21 @@ app.post('/login', (req, res) => {
     
 })
 
-app.get('/register', (req, res) =>{
+app.get('/register', (req, res) => {
     res.render('register.ejs')
 })
 
-app.post('/register', async (req, res) =>{
+app.post('/register', async (req, res) => {
  
     try {
         const hashedPassword =  await bcrypt.hash(req.body.password, 10)
 
-        try {
+        await registerUser(req, hashedPassword)   
 
-            await mongoClient.connect()
-            console.log('___DATABASE CONNECTION SUCCESSFUL___\n')
-
-        }catch(e) {
-            console.log('ERROR:___DATABASE CONNECTION UNSUCCESSFUL___\n')
-            console.log(e)
-        }
-        try {
-            await mongoClient.db("userDatabase").collection("users").insertOne({
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: req.body.email,
-                username: req.body.username,
-                password: hashedPassword
-            })
-            console.log('USER ' + req.body.username + ' HAS BEEN REGISTERED' )
-        }catch(e) {
-            console.log(e)
-        }
-        finally {
-            res.redirect('/login')
-        }   
-        
-        
+        res.redirect('/login')
     }
     catch(e) {
+        //what will the error be if... 1) user has already been registered 2) connection error 3) etc...
         console.log(e)
     }
 })
@@ -115,8 +93,34 @@ function getNasaData(callback) {
     
 }
 
-async function registerUser() {
-    
+async function registerUser(req, hashedPassword) {
+    //Make connection to the database
+    try {   
+        await mongoClient.connect()
+        console.log('___DATABASE CONNECTION SUCCESSFUL___\n')
+    }catch(e) {
+        console.log('ERROR:___DATABASE CONNECTION UNSUCCESSFUL___\n')
+        console.log(e)
+        return false
+    }
+
+    //Insert user into the database
+    try {
+        await mongoClient.db("userDatabase").collection("users").insertOne({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            username: req.body.username,
+            password: hashedPassword
+        })
+        console.log('USER ' + req.body.username + ' HAS BEEN REGISTERED' )
+        mongoClient.close()
+    }catch(e) {
+        console.log(e)
+        return false
+    }
+
+
 }
 
 app.listen(port)
