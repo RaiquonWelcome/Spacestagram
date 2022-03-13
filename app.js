@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const https = require('https')
 const { MongoClient } = require('mongodb')
 const bcrypt = require('bcrypt')
+const { is } = require('express/lib/request')
 
 //Constant Variables
 const app = express()
@@ -60,9 +61,19 @@ app.post('/register', async (req, res) => {
     try {
         const hashedPassword =  await bcrypt.hash(req.body.password, 10)
 
-        await registerUser(req, hashedPassword)   
+        let registerResData = await registerUser(req, hashedPassword)
+        
+        if (registerResData.code !== 1)
+        { 
+            //user has been registered
+            res.redirect('/login')
+        }else{
+            //alert the user with the correct message
+            console.log('here\n')
+            res.render('register', {error: true, code: registerResData.code, message: registerResData.message, reason: registerResData.reason}) 
+        }
 
-        res.redirect('/login')
+        
     }
     catch(e) {
         //what will the error be if... 1) user has already been registered 2) connection error 3) etc...
@@ -101,23 +112,42 @@ async function registerUser(req, hashedPassword) {
     }catch(e) {
         console.log('ERROR:___DATABASE CONNECTION UNSUCCESSFUL___\n')
         console.log(e)
-        return false
+        return {error: true, reason: 'DATABASE CONNECTION UNSUCCESSFUL', message: e, code: -1}
     }
 
     //Insert user into the database
     try {
-        await mongoClient.db("userDatabase").collection("users").insertOne({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            username: req.body.username,
-            password: hashedPassword
-        })
-        console.log('USER ' + req.body.username + ' HAS BEEN REGISTERED' )
-        mongoClient.close()
+
+        
+        if (await mongoClient.db("userDatabase").collection("users").findOne({username: req.body.username}) == null){ //using == in case the .find() returns undefined => null === undefined is false
+            //username is unique
+
+            await mongoClient.db("userDatabase").collection("users").insertOne({
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                username: req.body.username,
+                password: hashedPassword
+            })
+            console.log('USER ' + req.body.username + ' HAS BEEN REGISTERED' )
+            mongoClient.close()
+
+            return {error: false, code: 0}
+
+        }else{
+            //username is not unique
+            console.log('ERROR: USERNAME ' + req.body.username + ' HAS ALREADY BEEN TAKEN' )
+            mongoClient.close()
+
+            return {error: true, reason: 'ERROR: USERNAME ' + req.body.username + ' HAS ALREADY BEEN TAKEN', code: 1}
+        }
+        
+
     }catch(e) {
         console.log(e)
-        return false
+        mongoClient.close()
+
+        return {error: true, reason: 'ERROR: SOMETHING WENT WRONG', message: e, code: -1}
     }
 
 
