@@ -81,3 +81,6 @@ async function canUserLogin(req){
     }
 
 }
+
+module.exports.registerUser = registerUser
+module.exports.canUserLogin = canUserLogin
