@@ -6,7 +6,6 @@ const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const https = require('https')
-const { MongoClient } = require('mongodb')
 const bcrypt = require('bcrypt')
 const { is } = require('express/lib/request')
 const databaseCalls = require('./mongoDBCalls.js')
@@ -58,16 +57,17 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
  
     try {
+        //encrypt user password
         const hashedPassword =  await bcrypt.hash(req.body.password, 10)
 
         let registerResData = await databaseCalls.registerUser(req, hashedPassword)
         
-        if (registerResData.code !== 1)
+        if (registerResData.code === 0)
         { 
             //user has been registered
             res.redirect('/login')
         }else{
-            //alert the user with the correct message
+            //user has not been registered: display error message
             console.log('here\n')
             res.render('register', {error: true, code: registerResData.code, message: registerResData.message, reason: registerResData.reason}) 
         }
