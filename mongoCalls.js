@@ -84,5 +84,9 @@ async function canUserLogin(req){
 
 }
 
+function findUserByUsername(username) {
+    
+}
+
 module.exports.registerUser = registerUser
 module.exports.canUserLogin = canUserLogin
